@@ -97,7 +97,7 @@ dependencies {
 ### Kotlin
 
 ```kotlin
-import io.github.aaron-jang.opendart.OpenDartReader
+import io.github.aaronjang.opendart.OpenDartReader
 
 // 인스턴스 생성 (코루틴 내에서)
 val dart = OpenDartReader.create("YOUR_API_KEY")
@@ -118,8 +118,8 @@ dart.close()
 ### Java
 
 ```java
-import io.github.aaron-jang.opendart.OpenDartReader;
-import io.github.aaron-jang.opendart.model.*;
+import io.github.aaronjang.opendart.OpenDartReader;
+import io.github.aaronjang.opendart.model.*;
 import java.util.List;
 import java.util.Map;
 
