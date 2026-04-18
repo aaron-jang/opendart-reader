@@ -10,6 +10,7 @@ Python 라이브러리 [OpenDartReader](https://github.com/FinanceData/OpenDartR
 - 웹 스크래핑 기능 포함 (날짜별 공시목록, 하위문서, 첨부파일)
 - **Kotlin**: 코루틴 기반 `suspend fun` API
 - **Java**: 모든 메서드에 `*Sync` 동기 버전 제공
+- **Spring Boot**: 자동 설정 스타터 제공
 - 타입 안전한 data class 반환
 - 기업코드 자동 캐싱 (일별 갱신)
 
@@ -18,31 +19,68 @@ Python 라이브러리 [OpenDartReader](https://github.com/FinanceData/OpenDartR
 - JDK 17 이상
 - OpenDART API 인증키 ([발급 받기](https://opendart.fss.or.kr))
 
+## 모듈 구성
+
+| 모듈 | 설명 |
+|------|------|
+| `opendart-reader-core` | 코어 라이브러리 (Kotlin/Java) |
+| `opendart-reader-spring-boot-starter` | Spring Boot 자동 설정 스타터 |
+
 ## 설치
 
-### Gradle (Kotlin DSL)
+### 코어 라이브러리 (Kotlin/Java)
+
+#### Gradle (Kotlin DSL)
 
 ```kotlin
 dependencies {
-    implementation("io.github.aaronjang:opendart-reader:0.1.0")
+    implementation("io.github.aaronjang:opendart-reader-core:0.3.0")
 }
 ```
 
-### Gradle (Groovy)
+#### Gradle (Groovy)
 
 ```groovy
 dependencies {
-    implementation 'io.github.aaronjang:opendart-reader:0.1.0'
+    implementation 'io.github.aaronjang:opendart-reader-core:0.3.0'
 }
 ```
 
-### Maven
+#### Maven
 
 ```xml
 <dependency>
     <groupId>io.github.aaronjang</groupId>
-    <artifactId>opendart-reader</artifactId>
-    <version>0.1.0</version>
+    <artifactId>opendart-reader-core</artifactId>
+    <version>0.3.0</version>
+</dependency>
+```
+
+### Spring Boot 스타터
+
+#### Gradle (Kotlin DSL)
+
+```kotlin
+dependencies {
+    implementation("io.github.aaronjang:opendart-reader-spring-boot-starter:0.3.0")
+}
+```
+
+#### Gradle (Groovy)
+
+```groovy
+dependencies {
+    implementation 'io.github.aaronjang:opendart-reader-spring-boot-starter:0.3.0'
+}
+```
+
+#### Maven
+
+```xml
+<dependency>
+    <groupId>io.github.aaronjang</groupId>
+    <artifactId>opendart-reader-spring-boot-starter</artifactId>
+    <version>0.3.0</version>
 </dependency>
 ```
 
@@ -91,6 +129,84 @@ List<FinancialStatement> finstate = dart.finstateSync("삼성전자", 2023);
 
 // 사용 후 반드시 close
 dart.close();
+```
+
+### Spring Boot
+
+`opendart-reader-spring-boot-starter` 의존성을 추가하면 `OpenDartReader`가 자동으로 빈 등록됩니다.
+
+**1. 프로퍼티 설정**
+
+```yaml
+# application.yml
+opendart:
+  api-key: YOUR_API_KEY
+```
+
+```properties
+# 또는 application.properties
+opendart.api-key=YOUR_API_KEY
+```
+
+**2. 주입받아 사용**
+
+```kotlin
+// Kotlin
+@Service
+class DartService(private val dart: OpenDartReader) {
+
+    fun getDisclosures(corpName: String): List<Disclosure> {
+        return dart.listSync(corpName)
+    }
+
+    fun getFinancials(corpName: String, year: Int): List<FinancialStatement> {
+        return dart.finstateSync(corpName, year)
+    }
+}
+```
+
+```java
+// Java
+@Service
+public class DartService {
+    
+    private final OpenDartReader dart;
+
+    public DartService(OpenDartReader dart) {
+        this.dart = dart;
+    }
+
+    public List<Disclosure> getDisclosures(String corpName) {
+        return dart.listSync(corpName);
+    }
+
+    public List<FinancialStatement> getFinancials(String corpName, int year) {
+        return dart.finstateSync(corpName, year);
+    }
+}
+```
+
+**3. 설정 옵션**
+
+| 프로퍼티 | 필수 | 설명 |
+|----------|------|------|
+| `opendart.api-key` | O | OpenDART API 인증키 |
+
+> `opendart.api-key`가 설정되지 않으면 `OpenDartReader` 빈이 등록되지 않습니다.
+
+**4. 커스텀 빈 등록**
+
+자동 설정 대신 직접 빈을 등록할 수도 있습니다. `@ConditionalOnMissingBean`이 적용되어 있어 사용자 빈이 우선합니다.
+
+```kotlin
+@Configuration
+class MyDartConfig {
+
+    @Bean
+    fun openDartReader(): OpenDartReader {
+        return OpenDartReader.createSync("YOUR_API_KEY")
+    }
+}
 ```
 
 ## API 레퍼런스
