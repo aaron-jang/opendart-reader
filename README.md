@@ -24,7 +24,7 @@ Python 라이브러리 [OpenDartReader](https://github.com/FinanceData/OpenDartR
 
 ```kotlin
 dependencies {
-    implementation("io.github.nicekk1:opendart-reader:0.1.0")
+    implementation("io.github.aaronjang:opendart-reader:0.1.0")
 }
 ```
 
@@ -32,7 +32,7 @@ dependencies {
 
 ```groovy
 dependencies {
-    implementation 'io.github.nicekk1:opendart-reader:0.1.0'
+    implementation 'io.github.aaronjang:opendart-reader:0.1.0'
 }
 ```
 
@@ -40,7 +40,7 @@ dependencies {
 
 ```xml
 <dependency>
-    <groupId>io.github.nicekk1</groupId>
+    <groupId>io.github.aaronjang</groupId>
     <artifactId>opendart-reader</artifactId>
     <version>0.1.0</version>
 </dependency>
@@ -51,7 +51,7 @@ dependencies {
 ### Kotlin
 
 ```kotlin
-import io.github.nicekk1.opendart.OpenDartReader
+import io.github.aaronjang.opendart.OpenDartReader
 
 // 인스턴스 생성 (코루틴 내에서)
 val dart = OpenDartReader.create("YOUR_API_KEY")
@@ -72,8 +72,8 @@ dart.close()
 ### Java
 
 ```java
-import io.github.nicekk1.opendart.OpenDartReader;
-import io.github.nicekk1.opendart.model.*;
+import io.github.aaronjang.opendart.OpenDartReader;
+import io.github.aaronjang.opendart.model.*;
 import java.util.List;
 import java.util.Map;
 

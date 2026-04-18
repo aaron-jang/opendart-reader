@@ -4,7 +4,7 @@ plugins {
     `maven-publish`
 }
 
-group = "io.github.nicekk1"
+group = "io.github.aaronjang"
 version = "0.1.0"
 
 repositories {
