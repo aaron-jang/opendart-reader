@@ -1,1 +1,1 @@
-rootProject.name = "opendart-reader-kt"
+rootProject.name = "opendart-reader"
