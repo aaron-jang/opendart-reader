@@ -1,43 +1,35 @@
 plugins {
-    kotlin("jvm") version "2.1.20"
-    kotlin("plugin.serialization") version "2.1.20"
-    `maven-publish`
+    kotlin("jvm") version "2.1.20" apply false
+    kotlin("plugin.serialization") version "2.1.20" apply false
+    kotlin("plugin.spring") version "2.1.20" apply false
 }
 
-group = "io.github.aaronjang"
-version = "0.1.0"
+allprojects {
+    group = "io.github.aaronjang"
+    version = "0.2.0"
 
-repositories {
-    mavenCentral()
+    repositories {
+        mavenCentral()
+    }
 }
 
-val ktorVersion = "3.1.3"
+subprojects {
+    apply(plugin = "kotlin")
+    apply(plugin = "maven-publish")
 
-dependencies {
-    implementation("io.ktor:ktor-client-core:$ktorVersion")
-    implementation("io.ktor:ktor-client-cio:$ktorVersion")
-    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
-    implementation("org.jsoup:jsoup:1.18.3")
-    testImplementation(kotlin("test"))
-    testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
-}
+    configure<org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension> {
+        jvmToolchain(17)
+    }
 
-kotlin {
-    jvmToolchain(17)
-}
+    tasks.withType<Test> {
+        useJUnitPlatform()
+    }
 
-tasks.test {
-    useJUnitPlatform()
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            from(components["java"])
+    configure<PublishingExtension> {
+        publications {
+            create<MavenPublication>("maven") {
+                from(components["java"])
+            }
         }
     }
 }
