@@ -1,5 +1,13 @@
 # opendart-reader
 
+[![CI](https://github.com/aaron-jang/opendart-reader/actions/workflows/ci.yml/badge.svg)](https://github.com/aaron-jang/opendart-reader/actions/workflows/ci.yml)
+[![Release](https://github.com/aaron-jang/opendart-reader/actions/workflows/release.yml/badge.svg)](https://github.com/aaron-jang/opendart-reader/actions/workflows/release.yml)
+[![GitHub release](https://img.shields.io/github/v/release/aaron-jang/opendart-reader)](https://github.com/aaron-jang/opendart-reader/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.1.20-blue.svg)](https://kotlinlang.org)
+[![JDK](https://img.shields.io/badge/JDK-17%2B-orange.svg)](https://openjdk.org)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4-green.svg)](https://spring.io/projects/spring-boot)
+
 금융감독원 전자공시시스템(OpenDART) API를 JVM(Kotlin/Java)에서 쉽게 사용할 수 있는 라이브러리입니다.
 
 Python 라이브러리 [OpenDartReader](https://github.com/FinanceData/OpenDartReader)의 모든 기능을 Kotlin/JVM으로 포팅했습니다.
