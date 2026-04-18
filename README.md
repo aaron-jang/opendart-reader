@@ -42,7 +42,7 @@ Python 라이브러리 [OpenDartReader](https://github.com/FinanceData/OpenDartR
 
 ```kotlin
 dependencies {
-    implementation("io.github.aaronjang:opendart-reader-core:0.3.0")
+    implementation("io.github.aaron-jang:opendart-reader-core:0.4.0")
 }
 ```
 
@@ -50,7 +50,7 @@ dependencies {
 
 ```groovy
 dependencies {
-    implementation 'io.github.aaronjang:opendart-reader-core:0.3.0'
+    implementation 'io.github.aaron-jang:opendart-reader-core:0.4.0'
 }
 ```
 
@@ -58,9 +58,9 @@ dependencies {
 
 ```xml
 <dependency>
-    <groupId>io.github.aaronjang</groupId>
+    <groupId>io.github.aaron-jang</groupId>
     <artifactId>opendart-reader-core</artifactId>
-    <version>0.3.0</version>
+    <version>0.4.0</version>
 </dependency>
 ```
 
@@ -70,7 +70,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation("io.github.aaronjang:opendart-reader-spring-boot-starter:0.3.0")
+    implementation("io.github.aaron-jang:opendart-reader-spring-boot-starter:0.4.0")
 }
 ```
 
@@ -78,7 +78,7 @@ dependencies {
 
 ```groovy
 dependencies {
-    implementation 'io.github.aaronjang:opendart-reader-spring-boot-starter:0.3.0'
+    implementation 'io.github.aaron-jang:opendart-reader-spring-boot-starter:0.4.0'
 }
 ```
 
@@ -86,9 +86,9 @@ dependencies {
 
 ```xml
 <dependency>
-    <groupId>io.github.aaronjang</groupId>
+    <groupId>io.github.aaron-jang</groupId>
     <artifactId>opendart-reader-spring-boot-starter</artifactId>
-    <version>0.3.0</version>
+    <version>0.4.0</version>
 </dependency>
 ```
 
@@ -97,7 +97,7 @@ dependencies {
 ### Kotlin
 
 ```kotlin
-import io.github.aaronjang.opendart.OpenDartReader
+import io.github.aaron-jang.opendart.OpenDartReader
 
 // 인스턴스 생성 (코루틴 내에서)
 val dart = OpenDartReader.create("YOUR_API_KEY")
@@ -118,8 +118,8 @@ dart.close()
 ### Java
 
 ```java
-import io.github.aaronjang.opendart.OpenDartReader;
-import io.github.aaronjang.opendart.model.*;
+import io.github.aaron-jang.opendart.OpenDartReader;
+import io.github.aaron-jang.opendart.model.*;
 import java.util.List;
 import java.util.Map;
 
