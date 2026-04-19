@@ -1,6 +1,8 @@
 package io.github.aaronjang.opendart
 
 import io.github.aaronjang.opendart.api.*
+import io.github.aaronjang.opendart.cache.DartCache
+import io.github.aaronjang.opendart.cache.InMemoryDartCache
 import io.github.aaronjang.opendart.internal.CorpCodeCache
 import io.github.aaronjang.opendart.internal.DartClient
 import io.github.aaronjang.opendart.model.*
@@ -14,30 +16,38 @@ import java.time.LocalDate
 
 class OpenDartReader private constructor(
     private val client: DartClient,
-    private val cache: CorpCodeCache,
+    private val corpCodeCache: CorpCodeCache,
+    private val dartCache: DartCache,
 ) : Closeable {
 
     companion object {
-        suspend fun create(apiKey: String, engine: HttpClientEngine = CIO.create()): OpenDartReader {
+        suspend fun create(
+            apiKey: String,
+            engine: HttpClientEngine = CIO.create(),
+            cache: DartCache = InMemoryDartCache(),
+        ): OpenDartReader {
             val client = DartClient(apiKey, engine)
-            val cache = CorpCodeCache(client)
-            cache.load()
-            return OpenDartReader(client, cache)
+            val corpCodeCache = CorpCodeCache(client, cache)
+            corpCodeCache.load()
+            return OpenDartReader(client, corpCodeCache, cache)
         }
 
         /** Java에서 사용 가능한 동기 팩토리 메서드 */
         @JvmStatic
         fun createSync(apiKey: String): OpenDartReader = runBlocking { create(apiKey) }
 
+        @JvmStatic
+        fun createSync(apiKey: String, cache: DartCache): OpenDartReader = runBlocking { create(apiKey, cache = cache) }
+
         /** 테스트 전용 - 미리 로드된 기업코드로 인스턴스 생성 */
         fun forTesting(apiKey: String, corpCodes: List<CorpCode>): OpenDartReader {
             val client = DartClient(apiKey)
-            val cache = CorpCodeCache(client)
-            // Use reflection or a test-friendly approach to set corp codes
+            val dartCache = InMemoryDartCache()
+            val corpCodeCache = CorpCodeCache(client, dartCache)
             val field = CorpCodeCache::class.java.getDeclaredField("corpCodes")
             field.isAccessible = true
-            field.set(cache, corpCodes)
-            return OpenDartReader(client, cache)
+            field.set(corpCodeCache, corpCodes)
+            return OpenDartReader(client, corpCodeCache, dartCache)
         }
     }
 
@@ -68,7 +78,7 @@ class OpenDartReader private constructor(
     fun companySync(corp: String): Company = runBlocking { company(corp) }
 
     suspend fun companyByName(name: String): List<Company> {
-        val codes = cache.findByName(name).map { it.corpCode }
+        val codes = corpCodeCache.findByName(name).map { it.corpCode }
         return DartList.companyByName(client, codes)
     }
 
@@ -79,7 +89,7 @@ class OpenDartReader private constructor(
     fun documentSync(rcpNo: String): String = runBlocking { document(rcpNo) }
     fun documentAllSync(rcpNo: String): List<String> = runBlocking { documentAll(rcpNo) }
 
-    fun findCorpCode(corp: String): String? = cache.findCorpCode(corp)
+    fun findCorpCode(corp: String): String? = corpCodeCache.findCorpCode(corp)
 
     // === 사업보고서 ===
 
@@ -179,7 +189,7 @@ class OpenDartReader private constructor(
     // === 웹 스크래핑 ===
 
     suspend fun listDateEx(date: LocalDate? = null, cache: Boolean = true): List<Disclosure> =
-        DartScraper.listDateEx(client, date, cache)
+        DartScraper.listDateEx(client, dartCache, date, cache)
     @JvmOverloads
     fun listDateExSync(date: LocalDate? = null, cache: Boolean = true): List<Disclosure> =
         runBlocking { listDateEx(date, cache) }

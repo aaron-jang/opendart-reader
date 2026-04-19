@@ -1,9 +1,8 @@
 package io.github.aaronjang.opendart.internal
 
+import io.github.aaronjang.opendart.cache.DartCache
 import io.github.aaronjang.opendart.model.CorpCode
-import java.io.*
-import java.nio.file.Files
-import java.nio.file.Path
+import java.io.ByteArrayInputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.zip.ZipInputStream
@@ -11,29 +10,23 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 class CorpCodeCache(
     private val client: DartClient,
-    private val cacheDir: Path = Path.of("docs_cache"),
+    private val dartCache: DartCache,
 ) {
     private var corpCodes: List<CorpCode> = emptyList()
 
     suspend fun load(): List<CorpCode> {
         if (corpCodes.isNotEmpty()) return corpCodes
 
-        Files.createDirectories(cacheDir)
         val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
-        val cacheFile = cacheDir.resolve("opendartreader_corp_codes_$today.dat")
+        val cacheKey = "corp_codes_$today"
 
-        // Clean old cache files
-        cacheDir.toFile().listFiles()?.filter {
-            it.name.startsWith("opendartreader_corp_codes_") && it.name != cacheFile.fileName.toString()
-        }?.forEach { it.delete() }
-
-        if (Files.exists(cacheFile)) {
-            val xml = Files.readString(cacheFile)
-            corpCodes = parseCorpCodeXml(xml)
+        val cachedXml = dartCache.get(cacheKey)
+        if (cachedXml != null) {
+            corpCodes = parseCorpCodeXml(cachedXml)
         } else {
             val bytes = client.getBytes("corpCode.xml", emptyMap())
             val xml = extractXmlFromZip(bytes)
-            Files.writeString(cacheFile, xml)
+            dartCache.put(cacheKey, xml)
             corpCodes = parseCorpCodeXml(xml)
         }
         return corpCodes

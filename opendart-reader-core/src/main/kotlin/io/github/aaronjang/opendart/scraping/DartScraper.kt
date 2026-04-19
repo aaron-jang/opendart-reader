@@ -1,5 +1,6 @@
 package io.github.aaronjang.opendart.scraping
 
+import io.github.aaronjang.opendart.cache.DartCache
 import io.github.aaronjang.opendart.internal.DartClient
 import io.github.aaronjang.opendart.model.Disclosure
 import io.github.aaronjang.opendart.model.SubDocument
@@ -7,7 +8,6 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.delay
 import org.jsoup.Jsoup
-import java.net.URLEncoder
 import java.nio.file.Files
 import java.nio.file.Path
 import java.time.LocalDate
@@ -26,27 +26,28 @@ object DartScraper {
     )
 
     suspend fun listDateEx(
-        client: DartClient, date: LocalDate? = null, cache: Boolean = true,
+        client: DartClient, dartCache: DartCache, date: LocalDate? = null, cache: Boolean = true,
     ): List<Disclosure> {
         val d = date ?: LocalDate.now()
         val dateStr = d.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
-        val cacheDir = Path.of("docs_cache")
-        Files.createDirectories(cacheDir)
         val result = mutableListOf<Disclosure>()
 
         for (page in 1..99) {
             delay(100)
             val url = "$DART_BASE/dsac001/search.ax?selectDate=$dateStr&pageGrouping=A&currentPage=$page"
             val html = if (cache) {
-                val cacheFile = cacheDir.resolve(URLEncoder.encode(url, "UTF-8"))
-                if (Files.exists(cacheFile) && Files.size(cacheFile) > 0) {
-                    Files.readString(cacheFile)
+                val cacheKey = "html_$url"
+                val cached = dartCache.get(cacheKey)
+                if (cached != null) {
+                    cached
                 } else {
                     val text = fetchHtml(client, url)
-                    Files.writeString(cacheFile, text)
+                    dartCache.put(cacheKey, text)
                     text
                 }
-            } else { fetchHtml(client, url) }
+            } else {
+                fetchHtml(client, url)
+            }
 
             if ("검색된 자료가 없습니다" in html) break
 
