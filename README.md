@@ -217,6 +217,83 @@ class MyDartConfig {
 }
 ```
 
+## 캐시
+
+기업코드와 웹 스크래핑 결과를 캐싱합니다. `DartCache` 인터페이스를 통해 캐시 구현체를 교체할 수 있습니다.
+
+### 기본 동작 (인메모리)
+
+별도 설정 없이 `InMemoryDartCache`가 사용됩니다. 파일 시스템을 사용하지 않으며, 애플리케이션 재시작 시 초기화됩니다.
+
+```kotlin
+// 기본 (인메모리 캐시)
+val dart = OpenDartReader.create("YOUR_API_KEY")
+```
+
+### 커스텀 캐시 주입
+
+`DartCache` 인터페이스를 구현하여 원하는 캐시를 사용할 수 있습니다.
+
+```kotlin
+// DartCache 인터페이스
+interface DartCache {
+    fun get(key: String): String?
+    fun put(key: String, value: String)
+    fun containsKey(key: String): Boolean
+}
+
+// 커스텀 캐시 주입
+val myCache = MyCustomDartCache()
+val dart = OpenDartReader.create("YOUR_API_KEY", cache = myCache)
+```
+
+### Spring Boot 캐시 연동
+
+Spring Boot 환경에서는 `CacheManager` 빈이 있으면 자동으로 Spring Cache를 사용합니다.
+
+| 조건 | 사용되는 캐시 |
+|------|-------------|
+| `CacheManager` 빈 있음 | `SpringDartCache` (Spring Cache 추상화) |
+| `CacheManager` 빈 없음 | `InMemoryDartCache` (자동 폴백) |
+| `DartCache` 빈 직접 등록 | 사용자 빈 우선 |
+
+**Caffeine 사용 예시:**
+
+```kotlin
+// build.gradle.kts
+implementation("org.springframework.boot:spring-boot-starter-cache")
+implementation("com.github.ben-manes.caffeine:caffeine")
+```
+
+```yaml
+# application.yml
+spring:
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=1000,expireAfterWrite=86400s
+```
+
+**Redis 사용 예시:**
+
+```kotlin
+// build.gradle.kts
+implementation("org.springframework.boot:spring-boot-starter-data-redis")
+```
+
+```yaml
+# application.yml
+spring:
+  cache:
+    type: redis
+  data:
+    redis:
+      host: localhost
+      port: 6379
+```
+
+별도의 코드 변경 없이 의존성과 설정만 추가하면 캐시 구현체가 자동으로 전환됩니다.
+
 ## API 레퍼런스
 
 ### 기업 식별자
