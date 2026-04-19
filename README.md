@@ -2,13 +2,16 @@
 
 [![CI](https://github.com/aaron-jang/opendart-reader/actions/workflows/ci.yml/badge.svg)](https://github.com/aaron-jang/opendart-reader/actions/workflows/ci.yml)
 [![Release](https://github.com/aaron-jang/opendart-reader/actions/workflows/release.yml/badge.svg)](https://github.com/aaron-jang/opendart-reader/actions/workflows/release.yml)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.aaron-jang/opendart-reader-core)](https://central.sonatype.com/search?q=io.github.aaron-jang)
 [![GitHub release](https://img.shields.io/github/v/release/aaron-jang/opendart-reader)](https://github.com/aaron-jang/opendart-reader/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.1.20-blue.svg)](https://kotlinlang.org)
 [![JDK](https://img.shields.io/badge/JDK-17%2B-orange.svg)](https://openjdk.org)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4-green.svg)](https://spring.io/projects/spring-boot)
 
-금융감독원 전자공시시스템(OpenDART) API를 JVM(Kotlin/Java)에서 쉽게 사용할 수 있는 라이브러리입니다.
+**OpenDART(전자공시시스템) API Kotlin/Java 클라이언트 라이브러리** - 금융감독원 DART 공시정보, 재무제표, 사업보고서 등을 JVM 환경에서 간편하게 조회할 수 있습니다. Spring Boot 자동 설정을 지원하며, Maven Central에서 바로 사용 가능합니다.
+
+> **OpenDART API client library for Kotlin/Java (JVM)** - Access Korea's DART (Data Analysis, Retrieval and Transfer System) corporate disclosure data including financial statements, business reports, and shareholder information. Supports Spring Boot auto-configuration and is available on Maven Central.
 
 Python 라이브러리 [OpenDartReader](https://github.com/FinanceData/OpenDartReader)의 모든 기능을 Kotlin/JVM으로 포팅했습니다.
 
@@ -73,7 +76,7 @@ Python 라이브러리 [OpenDartReader](https://github.com/FinanceData/OpenDartR
 
 ```kotlin
 dependencies {
-    implementation("io.github.aaron-jang:opendart-reader-core:0.4.0")
+    implementation("io.github.aaron-jang:opendart-reader-core:0.5.0")
 }
 ```
 
@@ -81,7 +84,7 @@ dependencies {
 
 ```groovy
 dependencies {
-    implementation 'io.github.aaron-jang:opendart-reader-core:0.4.0'
+    implementation 'io.github.aaron-jang:opendart-reader-core:0.5.0'
 }
 ```
 
@@ -91,7 +94,7 @@ dependencies {
 <dependency>
     <groupId>io.github.aaron-jang</groupId>
     <artifactId>opendart-reader-core</artifactId>
-    <version>0.4.0</version>
+    <version>0.5.0</version>
 </dependency>
 ```
 
@@ -101,7 +104,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation("io.github.aaron-jang:opendart-reader-spring-boot-starter:0.4.0")
+    implementation("io.github.aaron-jang:opendart-reader-spring-boot-starter:0.5.0")
 }
 ```
 
@@ -109,7 +112,7 @@ dependencies {
 
 ```groovy
 dependencies {
-    implementation 'io.github.aaron-jang:opendart-reader-spring-boot-starter:0.4.0'
+    implementation 'io.github.aaron-jang:opendart-reader-spring-boot-starter:0.5.0'
 }
 ```
 
@@ -119,7 +122,7 @@ dependencies {
 <dependency>
     <groupId>io.github.aaron-jang</groupId>
     <artifactId>opendart-reader-spring-boot-starter</artifactId>
-    <version>0.4.0</version>
+    <version>0.5.0</version>
 </dependency>
 ```
 
