@@ -55,19 +55,18 @@ class OpenDartReader private constructor(
 
     suspend fun list(
         corp: String? = null, start: LocalDate? = null, end: LocalDate? = null,
-        kind: String = "", kindDetail: String = "", final: Boolean = true,
+        kind: DisclosureType? = null, kindDetail: String = "", final: Boolean = true,
     ): List<Disclosure> {
         val corpCode = if (corp != null) {
             findCorpCode(corp) ?: throw IllegalArgumentException("\"$corp\"을(를) 찾을 수 없습니다")
         } else ""
-        return DartList.list(client, corpCode, start, end, kind, kindDetail, final)
+        return DartList.list(client, corpCode, start, end, kind?.code ?: "", kindDetail, final)
     }
 
-    /** Java용 동기 메서드 */
     @JvmOverloads
     fun listSync(
         corp: String? = null, start: LocalDate? = null, end: LocalDate? = null,
-        kind: String = "", kindDetail: String = "", final: Boolean = true,
+        kind: DisclosureType? = null, kindDetail: String = "", final: Boolean = true,
     ): List<Disclosure> = runBlocking { list(corp, start, end, kind, kindDetail, final) }
 
     suspend fun company(corp: String): Company {
@@ -94,20 +93,22 @@ class OpenDartReader private constructor(
     // === 사업보고서 ===
 
     suspend fun report(
-        corp: String, keyWord: String, bsnsYear: Int, reprtCode: String = "11011",
+        corp: String, keyWord: String, bsnsYear: Int, reprtCode: ReportType = ReportType.ANNUAL,
     ): List<Map<String, String>> {
         val corpCode = findCorpCode(corp) ?: throw IllegalArgumentException("\"$corp\"을(를) 찾을 수 없습니다")
-        return DartReport.report(client, corpCode, keyWord, bsnsYear, reprtCode)
+        return DartReport.report(client, corpCode, keyWord, bsnsYear, reprtCode.code)
     }
 
     @JvmOverloads
     fun reportSync(
-        corp: String, keyWord: String, bsnsYear: Int, reprtCode: String = "11011",
+        corp: String, keyWord: String, bsnsYear: Int, reprtCode: ReportType = ReportType.ANNUAL,
     ): List<Map<String, String>> = runBlocking { report(corp, keyWord, bsnsYear, reprtCode) }
 
     // === 재무제표 ===
 
-    suspend fun finstate(corp: String, bsnsYear: Int, reprtCode: String = "11011"): List<FinancialStatement> {
+    suspend fun finstate(
+        corp: String, bsnsYear: Int, reprtCode: ReportType = ReportType.ANNUAL,
+    ): List<FinancialStatement> {
         val corpCode = if ("," in corp) {
             corp.split(",").joinToString(",") { c ->
                 findCorpCode(c.trim()) ?: throw IllegalArgumentException("\"${c.trim()}\"을(를) 찾을 수 없습니다")
@@ -115,23 +116,28 @@ class OpenDartReader private constructor(
         } else {
             findCorpCode(corp) ?: throw IllegalArgumentException("\"$corp\"을(를) 찾을 수 없습니다")
         }
-        return DartFinState.finstate(client, corpCode, bsnsYear, reprtCode)
+        return DartFinState.finstate(client, corpCode, bsnsYear, reprtCode.code)
     }
 
     @JvmOverloads
-    fun finstateSync(corp: String, bsnsYear: Int, reprtCode: String = "11011"): List<FinancialStatement> =
-        runBlocking { finstate(corp, bsnsYear, reprtCode) }
+    fun finstateSync(
+        corp: String, bsnsYear: Int, reprtCode: ReportType = ReportType.ANNUAL,
+    ): List<FinancialStatement> = runBlocking { finstate(corp, bsnsYear, reprtCode) }
 
     suspend fun finstateAll(
-        corp: String, bsnsYear: Int, reprtCode: String = "11011", fsDiv: String = "CFS",
+        corp: String, bsnsYear: Int,
+        reprtCode: ReportType = ReportType.ANNUAL,
+        fsDiv: FinStatementType = FinStatementType.CONSOLIDATED,
     ): List<FinancialStatement> {
         val corpCode = findCorpCode(corp) ?: throw IllegalArgumentException("\"$corp\"을(를) 찾을 수 없습니다")
-        return DartFinState.finstateAll(client, corpCode, bsnsYear, reprtCode, fsDiv)
+        return DartFinState.finstateAll(client, corpCode, bsnsYear, reprtCode.code, fsDiv.code)
     }
 
     @JvmOverloads
     fun finstateAllSync(
-        corp: String, bsnsYear: Int, reprtCode: String = "11011", fsDiv: String = "CFS",
+        corp: String, bsnsYear: Int,
+        reprtCode: ReportType = ReportType.ANNUAL,
+        fsDiv: FinStatementType = FinStatementType.CONSOLIDATED,
     ): List<FinancialStatement> = runBlocking { finstateAll(corp, bsnsYear, reprtCode, fsDiv) }
 
     suspend fun finstateXml(rcpNo: String, savePath: Path): Boolean =
